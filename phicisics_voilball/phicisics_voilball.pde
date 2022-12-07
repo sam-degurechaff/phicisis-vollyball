@@ -8,7 +8,8 @@ color yellow = color(242, 215, 16);
 //keyboard
 boolean wkey, akey, skey, dkey, upkey, downkey, rightkey, leftkey;
 FWorld world ;
-boolean leftplayer;
+float setvelocity;
+int leftplayer;
 void setup() {
   textAlign(CENTER, CENTER);
   rectMode(CENTER);
@@ -59,5 +60,28 @@ void keyreleased() {
 void handleplaterinput() {
   float left_vx=leftPlayer.getvelocityX();
   float left_vy=leftPlayer.getvelocityy();
-  leftplayer.setvelocity(100, 0);
+  if (wkey) (leftplayer.setvelocity(left_vx, -1000);
+}
+void draw() {
+  background(yellow);
+  handleplayerinput();
+  if (hitground(leftground)==true) {
+    rightscore++;
+    reset();
+  }
+  if (hitground(rightground)==true) {
+    leftsocre++;
+    reset();
+  }
+}
+boolean hitground(FBox ground) {
+  ArratList<FContact>contrctlist=ball.getContacts();
+  int i=0;
+  while (i<contactlist.size()) {
+    FContact myContact=contactList.get(i);
+    if (myCntact.contains(ground));
+    return true;
+    i++;
+  }
+  return false;
 }
