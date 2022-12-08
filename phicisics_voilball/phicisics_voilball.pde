@@ -8,8 +8,12 @@ color yellow = color(242, 215, 16);
 //keyboard
 boolean wkey, akey, skey, dkey, upkey, downkey, rightkey, leftkey;
 FWorld world ;
+int leftscore, rightscore, sp, vxb, vyb;
 float setvelocity;
-int leftplayer;
+FBox leftplayer, leftground, rightground, Contact;
+FCircle circle;
+FBox lbox;
+
 void setup() {
   textAlign(CENTER, CENTER);
   rectMode(CENTER);
@@ -23,19 +27,51 @@ void setup() {
   //initialize world
   makeWorld();
   //add terrain to world
-  makeTopPlatform();
-  makeBottomPlatform();
-  createworld();
-  createbodies();
+
+  //makeBottomPlatform();
+  makeCircle();
+  //createbodies();
   keypressed();
   keyreleased();
   handleplayerinput();
 }
-void createworld() {
+void makeWorld() {
   Fisica.init(this);
   world=new FWorld();
   world.setGravity(0, 980);
   world.setEdges();
+}
+void reset() {
+}
+void makeCircle() {
+  circle = new FCircle(50);
+  circle.setPosition(sp, -5);
+  //set visuals
+  circle.setStroke(0);
+  circle.setStrokeWeight(2);
+  circle.setFillColor(red);
+  //set physical properties
+  circle.setDensity(0.2);
+  circle.setFriction(1);
+  circle.setRestitution(1);
+  //add to world
+  world.add(circle);
+}
+void makeBox() {
+  FBox lbox = new FBox(25, 100);
+
+  //image(img, 0, 0);
+  //image(img, 0, 0, width/2, height/2);
+  lbox.setPosition(vxb, vyb);
+  //set visuals
+  lbox.setStroke(0);
+  lbox.setStrokeWeight(2);
+  lbox.setFillColor(green);
+  //set physical properties
+  lbox.setDensity(0.2);
+  lbox.setFriction(1);
+  lbox.setRestitution(0.25);
+  world.add(lbox);
 }
 void keypressed() {
   if (key=='w'||key=='W')wkey=true;
@@ -57,10 +93,15 @@ void keyreleased() {
   if (keyCode==LEFT)leftkey=false;
   if (keyCode==RIGHT)rightkey=false;
 }
-void handleplaterinput() {
-  float left_vx=leftPlayer.getvelocityX();
-  float left_vy=leftPlayer.getvelocityy();
-  if (wkey) (leftplayer.setvelocity(left_vx, -1000);
+void handleplayerinput() {
+  float left_vx=leftplayer.getVelocityX();
+  float left_vy=leftplayer.getVelocityY();
+  if (upkey==true) {
+    vxb=0;
+  } else {
+    vxb=20;
+  }
+  if (wkey) leftplayer.setVelocity(vxb, -1000);
 }
 void draw() {
   background(yellow);
@@ -70,17 +111,17 @@ void draw() {
     reset();
   }
   if (hitground(rightground)==true) {
-    leftsocre++;
+    leftscore++;
     reset();
   }
 }
 boolean hitground(FBox ground) {
-  ArratList<FContact>contrctlist=ball.getContacts();
+  ArrayList<FContact>contactlist=circle.getContacts();
   int i=0;
   while (i<contactlist.size()) {
-    FContact myContact=contactList.get(i);
-    if (myCntact.contains(ground));
-    return true;
+    FContact myContact=contactlist.get(i);
+    if (myContact.contains(ground))
+      return true;
     i++;
   }
   return false;
