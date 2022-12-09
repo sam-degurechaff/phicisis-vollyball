@@ -10,9 +10,9 @@ boolean wkey, akey, skey, dkey, upkey, downkey, rightkey, leftkey;
 FWorld world ;
 int leftscore, rightscore, sp, vxb, vyb;
 float setvelocity;
-FBox leftplayer, leftground, rightground, Contact;
+FBox leftplayer, leftground, rightground, rightplayer, Contact;
 FCircle circle;
-FBox lbox;
+
 
 void setup() {
   textAlign(CENTER, CENTER);
@@ -30,10 +30,11 @@ void setup() {
 
   //makeBottomPlatform();
   makeCircle();
+  makeBox();
+  makeBoxr();
+  makeBottomPlatform();
+
   //createbodies();
-  keypressed();
-  keyreleased();
-  handleplayerinput();
 }
 void makeWorld() {
   Fisica.init(this);
@@ -42,6 +43,24 @@ void makeWorld() {
   world.setEdges();
 }
 void reset() {
+}
+void makeBottomPlatform() {
+  FPoly p = new FPoly();
+  //plot the vertices of this platform
+  p.vertex(width, height*0.8);
+  p.vertex(width/2-100, height*.8);
+  p.vertex(width/2-100, height*.4);
+  p.vertex(width/2+100, height*.4);
+  p.vertex(width/2+100, height*.8);
+  p.vertex(0, height*0.8);
+  p.vertex(0, height*0.8+100);
+  p.vertex(width, height*0.8+100);
+  // define properties
+  p.setStatic(true);
+  p.setFillColor(brown);
+  p.setFriction(0);
+  //put it in the world
+  world.add(p);
 }
 void makeCircle() {
   circle = new FCircle(50);
@@ -58,22 +77,38 @@ void makeCircle() {
   world.add(circle);
 }
 void makeBox() {
-  FBox lbox = new FBox(25, 100);
+  leftplayer = new FBox(25, 100);
 
   //image(img, 0, 0);
   //image(img, 0, 0, width/2, height/2);
-  lbox.setPosition(vxb, vyb);
+  leftplayer.setPosition(100, 400);
   //set visuals
-  lbox.setStroke(0);
-  lbox.setStrokeWeight(2);
-  lbox.setFillColor(green);
+  leftplayer.setStroke(0);
+  leftplayer.setStrokeWeight(2);
+  leftplayer.setFillColor(green);
   //set physical properties
-  lbox.setDensity(0.2);
-  lbox.setFriction(1);
-  lbox.setRestitution(0.25);
-  world.add(lbox);
+  leftplayer.setDensity(0.2);
+  leftplayer.setFriction(1);
+  leftplayer.setRestitution(0.25);
+  world.add(leftplayer);
 }
-void keypressed() {
+void makeBoxr() {
+  rightplayer = new FBox(25, 100);
+
+  //image(img, 0, 0);
+  //image(img, 0, 0, width/2, height/2);
+  rightplayer.setPosition(100, 400);
+  //set visuals
+  rightplayer.setStroke(0);
+  rightplayer.setStrokeWeight(2);
+  rightplayer.setFillColor(green);
+  //set physical properties
+  rightplayer.setDensity(0.2);
+  rightplayer.setFriction(1);
+  rightplayer.setRestitution(0.25);
+  world.add(rightplayer);
+}
+void keyPressed() {
   if (key=='w'||key=='W')wkey=true;
   if (key=='a'||key=='A')akey=true;
   if (key=='s'||key=='S')skey=true;
@@ -83,7 +118,7 @@ void keypressed() {
   if (keyCode==LEFT)leftkey=true;
   if (keyCode==RIGHT)rightkey=true;
 }
-void keyreleased() {
+void keyReleased() {
   if (key=='w'||key=='W')wkey=false;
   if (key=='a'||key=='A')akey=false;
   if (key=='s'||key=='S')skey=false;
@@ -96,12 +131,15 @@ void keyreleased() {
 void handleplayerinput() {
   float left_vx=leftplayer.getVelocityX();
   float left_vy=leftplayer.getVelocityY();
-  if (upkey==true) {
-    vxb=0;
-  } else {
-    vxb=20;
-  }
-  if (wkey) leftplayer.setVelocity(vxb, -1000);
+
+  if (wkey) leftplayer.setVelocity(left_vx, -1000);
+  if (akey) leftplayer.setVelocity(-1000, left_vy);
+  if (dkey) leftplayer.setVelocity(1000, left_vy);
+  float right_vx=rightplayer.getVelocityX();
+  float right_vy=rightplayer.getVelocityY();
+  if (upkey) leftplayer.setVelocity(right_vx, -1000);
+  if (leftkey) leftplayer.setVelocity(-1000, right_vy);
+  if (rightkey) leftplayer.setVelocity(1000, right_vy);
 }
 void draw() {
   background(yellow);
@@ -109,11 +147,16 @@ void draw() {
   if (hitground(leftground)==true) {
     rightscore++;
     reset();
+    sp=200;
   }
   if (hitground(rightground)==true) {
     leftscore++;
     reset();
+    sp=800;
   }
+
+  world.step();  //get box2D to calculate all the forces and new positions
+  world.draw();  //ask box2D to convert this world to processing screen coordinates and draw
 }
 boolean hitground(FBox ground) {
   ArrayList<FContact>contactlist=circle.getContacts();
