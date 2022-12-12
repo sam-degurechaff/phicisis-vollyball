@@ -32,7 +32,7 @@ void setup() {
   makeCircle();
   makeBox();
   makeBoxr();
-  makeBottomPlatform();
+  makeBottomPlatform();makenet();
 
   //createbodies();
 }
@@ -48,10 +48,6 @@ void makeBottomPlatform() {
   FPoly p = new FPoly();
   //plot the vertices of this platform
   p.vertex(width, height*0.8);
-  p.vertex(width/2-100, height*.8);
-  p.vertex(width/2-100, height*.4);
-  p.vertex(width/2+100, height*.4);
-  p.vertex(width/2+100, height*.8);
   p.vertex(0, height*0.8);
   p.vertex(0, height*0.8+100);
   p.vertex(width, height*0.8+100);
@@ -62,6 +58,18 @@ void makeBottomPlatform() {
   //put it in the world
   world.add(p);
 }
+void makenet(){FPoly p = new FPoly();
+  //plot the vertices of this platform
+  p.vertex(width/2-10, height*0.6);
+  p.vertex(width/2-10, height*0.8);
+  p.vertex(width/2+10, height*0.8);
+  p.vertex(width/2+10, height*0.6);
+  // define properties
+  p.setStatic(true);
+  p.setFillColor(brown);
+  p.setFriction(0);
+  //put it in the world
+  world.add(p);}
 void makeCircle() {
   circle = new FCircle(50);
   circle.setPosition(sp, -5);
@@ -97,7 +105,7 @@ void makeBoxr() {
 
   //image(img, 0, 0);
   //image(img, 0, 0, width/2, height/2);
-  rightplayer.setPosition(100, 400);
+  rightplayer.setPosition(600, 400);
   //set visuals
   rightplayer.setStroke(0);
   rightplayer.setStrokeWeight(2);
