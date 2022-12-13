@@ -12,7 +12,7 @@ int leftscore, rightscore, sp, vxb, vyb;
 float setvelocity;
 FBox leftplayer, leftground, rightground, rightplayer, Contact;
 FCircle circle;
-
+int cx;
 
 void setup() {
   textAlign(CENTER, CENTER);
@@ -145,9 +145,13 @@ void handleplayerinput() {
   if (dkey) leftplayer.setVelocity(1000, left_vy);
   float right_vx=rightplayer.getVelocityX();
   float right_vy=rightplayer.getVelocityY();
-  if (upkey) leftplayer.setVelocity(right_vx, -1000);
-  if (leftkey) leftplayer.setVelocity(-1000, right_vy);
-  if (rightkey) leftplayer.setVelocity(1000, right_vy);
+  if (upkey) rightplayer.setVelocity(right_vx, -1000);
+  if (leftkey) rightplayer.setVelocity(-1000, right_vy);
+  if (rightkey) rightplayer.setVelocity(1000, right_vy);
+  float circle_px=circle.getX();
+  float circle_py=circle.getY();
+  if(circle.position>width)sp=width-1; 
+  if(sp>height) sp=height-1;
 }
 void draw() {
   background(yellow);
