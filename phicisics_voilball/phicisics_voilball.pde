@@ -10,7 +10,8 @@ boolean wkey, akey, skey, dkey, upkey, downkey, rightkey, leftkey;
 FWorld world ;
 int leftscore, rightscore, sp, vxb, vyb;
 float setvelocity;
-FBox leftplayer, leftground, rightground, rightplayer, Contact;
+FBox leftplayer, rightplayer, Contact;
+FPoly leftground, rightground;
 FCircle circle;
 int cx;
 
@@ -32,7 +33,9 @@ void setup() {
   makeCircle();
   makeBox();
   makeBoxr();
-  makeBottomPlatform();makenet();
+  makeBottomPlatform();
+  makenet();
+  makeBottomPlatformright();
 
   //createbodies();
 }
@@ -45,20 +48,35 @@ void makeWorld() {
 void reset() {
 }
 void makeBottomPlatform() {
-  FPoly p = new FPoly();
+  leftground = new FPoly();
   //plot the vertices of this platform
-  p.vertex(width, height*0.8);
-  p.vertex(0, height*0.8);
-  p.vertex(0, height*0.8+100);
-  p.vertex(width, height*0.8+100);
+  leftground.vertex(width/2, height*0.8);
+  leftground.vertex(0, height*0.8);
+  leftground.vertex(0, height*0.8+100);
+  leftground.vertex(width/2, height*0.8+100);
   // define properties
-  p.setStatic(true);
-  p.setFillColor(brown);
-  p.setFriction(0);
+  leftground.setStatic(true);
+  leftground.setFillColor(brown);
+  leftground.setFriction(0);
   //put it in the world
-  world.add(p);
+  world.add(leftground);
 }
-void makenet(){FPoly p = new FPoly();
+void makeBottomPlatformright() {
+  rightground = new FPoly();
+  //plot the vertices of this platform
+  rightground.vertex(width/2+800, height*0.8);
+  rightground.vertex(width/2, height*0.8);
+  rightground.vertex(width/2, height*0.8+100);
+  rightground.vertex(width/2+800, height*0.8+100);
+  // define properties
+  rightground.setStatic(true);
+  rightground.setFillColor(brown);
+  rightground.setFriction(0);
+  //put it in the world
+  world.add(rightground);
+}
+void makenet() {
+  FPoly p = new FPoly();
   //plot the vertices of this platform
   p.vertex(width/2-10, height*0.6);
   p.vertex(width/2-10, height*0.8);
@@ -69,10 +87,11 @@ void makenet(){FPoly p = new FPoly();
   p.setFillColor(brown);
   p.setFriction(0);
   //put it in the world
-  world.add(p);}
+  world.add(p);
+}
 void makeCircle() {
   circle = new FCircle(50);
-  circle.setPosition(sp, -5);
+  circle.setPosition(300, -5);
   //set visuals
   circle.setStroke(0);
   circle.setStrokeWeight(2);
@@ -148,14 +167,18 @@ void handleplayerinput() {
   if (upkey) rightplayer.setVelocity(right_vx, -1000);
   if (leftkey) rightplayer.setVelocity(-1000, right_vy);
   if (rightkey) rightplayer.setVelocity(1000, right_vy);
-  float circle_px=circle.getX();
-  float circle_py=circle.getY();
-  if(circle.position>width)sp=width-1; 
-  if(sp>height) sp=height-1;
+  //float circle_px=circle.getX();
+  //float circle_py=circle.getY();
+  //if(circle.x>width)circle.setposition(width-1,circle_py);
+  //if(circle.x<width)sp=1;
+  //if(circle.y>height) syp=height-1;
+  //if(circle.y<height) syp=1;
 }
 void draw() {
   background(yellow);
   handleplayerinput();
+  int leftscore=0;
+  int rightscore=0;
   if (hitground(leftground)==true) {
     rightscore++;
     reset();
@@ -166,11 +189,14 @@ void draw() {
     reset();
     sp=800;
   }
+  
 
+  text("leftscore", 300, 200);
+  text("rightscore", 700, 200);
   world.step();  //get box2D to calculate all the forces and new positions
   world.draw();  //ask box2D to convert this world to processing screen coordinates and draw
 }
-boolean hitground(FBox ground) {
+boolean hitground(FPoly ground) {
   ArrayList<FContact>contactlist=circle.getContacts();
   int i=0;
   while (i<contactlist.size()) {
