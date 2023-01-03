@@ -45,8 +45,7 @@ void makeWorld() {
   world.setGravity(0, 980);
   world.setEdges();
 }
-void reset() {
-}
+
 void makeBottomPlatform() {
   leftground = new FPoly();
   //plot the vertices of this platform
@@ -135,6 +134,10 @@ void makeBoxr() {
   rightplayer.setRestitution(0.25);
   world.add(rightplayer);
 }
+void reset() {
+  circle.setPosition(width/2, 20);
+  circle.setVelocity(0, 0);
+}
 void keyPressed() {
   if (key=='w'||key=='W')wkey=true;
   if (key=='a'||key=='A')akey=true;
@@ -189,7 +192,7 @@ void draw() {
     reset();
     sp=800;
   }
-  
+
 
   text("leftscore", 300, 200);
   text("rightscore", 700, 200);
